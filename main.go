@@ -5,11 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/rabbitmq/amqp091-go"
 )
 
 var rabbitmqConn *amqp091.Connection // Global variable to hold the RabbitMQ connection
+var rabbitmqChannel *amqp091.Channel // Add a global channel variable
 
 func main() {
 	log.Print("starting server...")
@@ -57,6 +59,69 @@ func connectRabbitMQ() {
 	}
 
 	log.Println("Successfully connected to RabbitMQ!")
+
+	// Create a channel
+	rabbitmqChannel, err = rabbitmqConn.Channel()
+	if err != nil {
+		log.Fatalf("Failed to open a channel: %v", err)
+	}
+
+	// Declare a queue
+	queue, err := rabbitmqChannel.QueueDeclare(
+		"test-queue", // name
+		false,        // durable
+		false,        // delete when unused
+		false,        // exclusive
+		false,        // no-wait
+		nil,          // arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare a queue: %v", err)
+	}
+	log.Printf("Declared queue: %s", queue.Name)
+
+	// Start consumer in a goroutine
+	go func() {
+		msgs, err := rabbitmqChannel.Consume(
+			queue.Name, // queue
+			"",         // consumer
+			true,       // auto-ack
+			false,      // exclusive
+			false,      // no-local
+			false,      // no-wait
+			nil,        // args
+		)
+		if err != nil {
+			log.Fatalf("Failed to register a consumer: %v", err)
+		}
+		log.Println("Consumer started. Waiting for messages...")
+		for msg := range msgs {
+			log.Printf("Received message: %s", msg.Body)
+		}
+	}()
+
+	// Start sending messages every 5 seconds in a goroutine
+	go func() {
+		for {
+			body := fmt.Sprintf("Hello at %s", time.Now().Format(time.RFC3339))
+			err = rabbitmqChannel.Publish(
+				"",         // exchange
+				queue.Name, // routing key (queue name)
+				false,      // mandatory
+				false,      // immediate
+				amqp091.Publishing{
+					ContentType: "text/plain",
+					Body:        []byte(body),
+				},
+			)
+			if err != nil {
+				log.Printf("Failed to publish a message: %v", err)
+			} else {
+				log.Printf("Sent message: %s", body)
+			}
+			time.Sleep(5 * time.Second)
+		}
+	}()
 }
 
 // rabbitmqStatusHandler checks and reports the RabbitMQ connection status
