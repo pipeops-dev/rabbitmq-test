@@ -95,40 +95,43 @@ func connectRabbitMQ() {
 			log.Fatalf("Failed to register a consumer: %v", err)
 		}
 		log.Println("Consumer started. Waiting for messages...")
-		count := 0
+		// count := 0
 		for msg := range msgs {
-			count++
-			if count%1000 == 0 {
-				log.Printf("Received %d messages. Latest: %s", count, msg.Body)
-			}
+			// count++
+			// if count%1000 == 0 {
+			log.Printf("Received %d messages. Latest: %s", msg.Body)
+			// }
 		}
 	}()
 
 	// Start sending a large number of messages quickly in a goroutine for stress test
 	go func() {
 		const totalMessages = 100000 // Adjust this number for more/less stress
-		for i := 1; i <= totalMessages; i++ {
-			body := fmt.Sprintf("Stress test message #%d at %s", i, time.Now().Format(time.RFC3339Nano))
-			err = rabbitmqChannel.Publish(
-				"",         // exchange
-				queue.Name, // routing key (queue name)
-				false,      // mandatory
-				false,      // immediate
-				amqp091.Publishing{
-					ContentType: "text/plain",
-					Body:        []byte(body),
-				},
-			)
-			if err != nil {
-				log.Printf("Failed to publish message #%d: %v", i, err)
+		for {
+			for i := 1; i <= totalMessages; i++ {
+				body := fmt.Sprintf("Stress test message #%d at %s", i, time.Now().Format(time.RFC3339Nano))
+				err = rabbitmqChannel.Publish(
+					"",         // exchange
+					queue.Name, // routing key (queue name)
+					false,      // mandatory
+					false,      // immediate
+					amqp091.Publishing{
+						ContentType: "text/plain",
+						Body:        []byte(body),
+					},
+				)
+				if err != nil {
+					log.Printf("Failed to publish message #%d: %v", i, err)
+				}
+				if i%1000 == 0 {
+					log.Printf("Published %d messages", i)
+				}
+				// Optional: Remove or adjust sleep for higher/lower throughput
+				// time.Sleep(1 * time.Millisecond)
 			}
-			if i%1000 == 0 {
-				log.Printf("Published %d messages", i)
-			}
-			// Optional: Remove or adjust sleep for higher/lower throughput
-			// time.Sleep(1 * time.Millisecond)
+			log.Printf("Finished publishing %d messages", totalMessages)
+			time.Sleep(10 * time.Second) // Wait 10 seconds before starting again
 		}
-		log.Printf("Finished publishing %d messages", totalMessages)
 	}()
 }
 
