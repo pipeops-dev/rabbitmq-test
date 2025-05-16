@@ -99,7 +99,7 @@ func connectRabbitMQ() {
 		for msg := range msgs {
 			// count++
 			// if count%1000 == 0 {
-			log.Printf("Received %d messages. Latest: %s", msg.Body)
+			log.Printf("Received messages. Latest: %s", msg.Body)
 			// }
 		}
 	}()
