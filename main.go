@@ -95,15 +95,20 @@ func connectRabbitMQ() {
 			log.Fatalf("Failed to register a consumer: %v", err)
 		}
 		log.Println("Consumer started. Waiting for messages...")
+		count := 0
 		for msg := range msgs {
-			log.Printf("Received message: %s", msg.Body)
+			count++
+			if count%1000 == 0 {
+				log.Printf("Received %d messages. Latest: %s", count, msg.Body)
+			}
 		}
 	}()
 
-	// Start sending messages every 5 seconds in a goroutine
+	// Start sending a large number of messages quickly in a goroutine for stress test
 	go func() {
-		for {
-			body := fmt.Sprintf("Hello at %s", time.Now().Format(time.RFC3339))
+		const totalMessages = 100000 // Adjust this number for more/less stress
+		for i := 1; i <= totalMessages; i++ {
+			body := fmt.Sprintf("Stress test message #%d at %s", i, time.Now().Format(time.RFC3339Nano))
 			err = rabbitmqChannel.Publish(
 				"",         // exchange
 				queue.Name, // routing key (queue name)
@@ -115,12 +120,15 @@ func connectRabbitMQ() {
 				},
 			)
 			if err != nil {
-				log.Printf("Failed to publish a message: %v", err)
-			} else {
-				log.Printf("Sent message: %s", body)
+				log.Printf("Failed to publish message #%d: %v", i, err)
 			}
-			time.Sleep(5 * time.Second)
+			if i%1000 == 0 {
+				log.Printf("Published %d messages", i)
+			}
+			// Optional: Remove or adjust sleep for higher/lower throughput
+			// time.Sleep(1 * time.Millisecond)
 		}
+		log.Printf("Finished publishing %d messages", totalMessages)
 	}()
 }
 
