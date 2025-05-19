@@ -38,4 +38,3 @@ WORKDIR /app
 
 # This works: dotnet always exits 0 with --info
 RUN --mount=type=secret,id=env,dst=/app/.env ["/usr/bin/dotnet", "--info"]
-
