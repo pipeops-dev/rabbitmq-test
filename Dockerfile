@@ -1,5 +1,5 @@
 # Stage 1: Build the Go app
-FROM golang:1.22-alpine AS builder
+FROM golang:1.24.1-alpine AS builder
 
 # Set necessary Go environment variables
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
