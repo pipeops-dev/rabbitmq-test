@@ -33,7 +33,7 @@
 
 # syntax=docker/dockerfile:1.4
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
 
 WORKDIR /app
 
