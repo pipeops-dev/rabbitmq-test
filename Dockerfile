@@ -42,8 +42,6 @@ RUN ls -al /usr/bin
 ARG secrets_hash
 
 # This works: dotnet always exits 0 with --info
-RUN --mount=type=secret,id=env,dst=/app/.env ls -l /app/.env
-
-
+RUN --mount=type=secret,id=env,dst=/tmp/.env echo > /dev/null "$secrets_hash"
 
 RUN echo "testing"
