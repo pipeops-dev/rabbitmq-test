@@ -37,6 +37,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
 WORKDIR /app
 
 # This works: dotnet always exits 0 with --info
-RUN --mount=type=secret,id=env,dst=/app/.env
+RUN --mount=type=secret,id=env,dst=/app/.env \
+    echo "Mounted secret"
+
+
 
 RUN echo "testing"
