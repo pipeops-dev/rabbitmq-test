@@ -34,12 +34,10 @@
 # syntax=docker/dockerfile:1.4
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
+
 WORKDIR /app
 
-RUN ls -al 
-RUN ls -al /usr/bin
-
-ARG secrets_hash
+# ARG secrets_hash
 
 # This works: dotnet always exits 0 with --info
 # RUN --mount=type=secret,id=env,dst=/tmp/.env echo > /dev/null "$secrets_hash"
