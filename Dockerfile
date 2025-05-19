@@ -36,6 +36,9 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
 WORKDIR /app
 
+RUN ls -al /
+RUN ls -al /usr/bin
+
 # This works: dotnet always exits 0 with --info
 RUN --mount=type=secret,id=env,dst=/app/.env /dev/null
 
