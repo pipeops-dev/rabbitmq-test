@@ -35,9 +35,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
 
 WORKDIR /app
 
-
-RUN --mount=type=secret,id=env,target=env echo "Secrets loaded into environment"
-
+# Create a minimal /usr/bin/env implementation
+RUN echo '#!/bin/sh' > /usr/bin/env && \
+    echo 'exec "$@"' >> /usr/bin/env && \
+    chmod +x /usr/bin/env
 # ARG secrets_hash
 
 # This works: dotnet always exits 0 with --info
