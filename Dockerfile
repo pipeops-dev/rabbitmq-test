@@ -29,9 +29,7 @@
 # # Set binary as entrypoint
 # ENTRYPOINT ["/main"]
 
-# syntax=docker/dockerfile:1.4
-
-syntax=docker/dockerfile:1.4
+#syntax=docker/dockerfile:1.4
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
 
