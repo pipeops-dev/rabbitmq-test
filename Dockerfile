@@ -35,9 +35,11 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
 
+WORKDIR /app
+
+
 RUN mkdir -p /usr/bin
 RUN --mount=type=secret,id=env,dst=/usr/bin/.env echo > /dev/null "$secrets_hash"
-# WORKDIR /app
 
 # ARG secrets_hash
 
