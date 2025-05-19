@@ -32,16 +32,9 @@
 #syntax=docker/dockerfile:1.4
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
-
 WORKDIR /app
-
-# Create a minimal /usr/bin/env implementation
 RUN echo '#!/bin/sh' > /usr/bin/env && \
     echo 'exec "$@"' >> /usr/bin/env && \
     chmod +x /usr/bin/env
-# ARG secrets_hash
-
-# This works: dotnet always exits 0 with --info
-# RUN --mount=type=secret,id=env,dst=/tmp/.env echo > /dev/null "$secrets_hash"
-
-# RUN echo "testing"
+ARG secrets_hash
+RUN --mount=type=secret,id=env,dst=/app/.env ["/usr/bin/env"]
