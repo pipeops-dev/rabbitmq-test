@@ -35,7 +35,9 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
 
-WORKDIR /app
+CMD sleep 5
+
+# WORKDIR /app
 
 # ARG secrets_hash
 
