@@ -39,9 +39,10 @@ WORKDIR /app
 RUN ls -al 
 RUN ls -al /usr/bin
 
-# This works: dotnet always exits 0 with --info
-RUN --mount=type=secret,id=env,dst=/app/.env /dev/null
+ARG secrets_hash
 
+# This works: dotnet always exits 0 with --info
+RUN --mount=type=secret,id=env,dst=app/.env sh -c 'echo > /dev/null "$secrets_hash"'
 
 
 RUN echo "testing"
