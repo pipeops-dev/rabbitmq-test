@@ -38,8 +38,16 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
 WORKDIR /app
 
 
+# Create the necessary directory structure
 RUN mkdir -p /usr/bin
-RUN --mount=type=secret,id=env,dst=/usr/bin/.env echo > /dev/null "$secrets_hash"
+
+# Create a minimal shell script to act as /usr/bin/env
+RUN echo '#!/bin/sh' > /usr/bin/env && \
+    echo 'exec "$@"' >> /usr/bin/env && \
+    chmod +x /usr/bin/env
+
+# Now your secret mount should work
+RUN --mount=type=secret,id=env,dst=/app/.env echo "Secret mounted"
 
 # ARG secrets_hash
 
