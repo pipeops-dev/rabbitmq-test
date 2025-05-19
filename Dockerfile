@@ -31,13 +31,11 @@
 
 # syntax=docker/dockerfile:1.4
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
+# syntax=docker/dockerfile:1.4
 
-# Set working directory (adjust as needed)
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra AS base
 WORKDIR /app
 
-# Securely mount secret using BuildKit (does not persist in image)
+# This works: dotnet always exits 0 with --info
 RUN --mount=type=secret,id=env,dst=/app/.env ["/usr/bin/dotnet", "--info"]
 
-# Dummy CMD (won't be reached in build)
-CMD ["dotnet", "--info"]
