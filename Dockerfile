@@ -33,8 +33,4 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
 WORKDIR /app
-RUN echo '#!/bin/sh' > /usr/bin/env && \
-    echo 'exec "$@"' >> /usr/bin/env && \
-    chmod +x /usr/bin/env
-ARG secrets_hash
 RUN --mount=type=secret,id=env,dst=/app/.env ["/usr/bin/env"]
