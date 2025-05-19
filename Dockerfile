@@ -42,4 +42,4 @@ WORKDIR /app
 # This works: dotnet always exits 0 with --info
 # RUN --mount=type=secret,id=env,dst=/tmp/.env echo > /dev/null "$secrets_hash"
 
-RUN echo "testing"
+# RUN echo "testing"
