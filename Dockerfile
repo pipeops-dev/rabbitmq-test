@@ -35,5 +35,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
 WORKDIR /app
 ARG secrets_hash
 # # Set binary as entrypoint
-# ENTRYPOINT ["/main"]
-RUN --mount=type=secret,id=env,dst=/app/.env /bin/true
+ENTRYPOINT ["/main"]
