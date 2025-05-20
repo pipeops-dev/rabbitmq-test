@@ -34,6 +34,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-extra
 WORKDIR /app
 ARG secrets_hash
-RUN echo $RABBITMQ_URL
+# RUN echo $RABBITMQ_URL
 # # Set binary as entrypoint
 ENTRYPOINT ["/main"]
